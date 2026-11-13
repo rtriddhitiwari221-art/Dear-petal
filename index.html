@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f3ed">
+  <meta name="description" content="Bloom — your personal space to learn, reflect and grow.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>Bloom — Your little world</title>
+  <style>
+    :root{--bg:#f7f3ed;--paper:#fffdfa;--ink:#44382f;--muted:#88796d;--line:#e8dfd5;--accent:#987b65;--accent2:#d8c6b5;--soft:#efe7de;--good:#71816b;--shadow:0 8px 28px #4b38200d}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+    button,input,textarea,select{font:inherit} button{cursor:pointer}
+    .app{max-width:760px;margin:auto;padding:18px 16px 100px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 2px 18px}
+    .brand{font:600 27px Georgia,serif;letter-spacing:.3px}.tag{color:var(--muted);font-size:12px}
+    .date{font-size:12px;color:var(--muted);text-align:right}
+    .hero{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+    .eyebrow{text-transform:uppercase;letter-spacing:1.8px;font-size:10px;color:var(--muted);font-weight:700}
+    h1{font:500 27px/1.2 Georgia,serif;margin:8px 0} h2{font:600 20px Georgia,serif;margin:0 0 12px}
+    p{margin:6px 0;color:var(--muted)} .quote{font:italic 16px Georgia,serif;color:#6e5949;margin-top:12px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow);min-width:0}
+    .wide{grid-column:1/-1}.section{display:none}.section.active{display:block}
+    .nav{position:fixed;bottom:0;left:0;right:0;background:#fffdfaee;backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;justify-content:center;z-index:5}
+    .navinner{max-width:760px;width:100%;display:flex;overflow:auto;padding:7px 5px calc(7px + env(safe-area-inset-bottom));gap:3px}
+    .nav button{flex:1;min-width:58px;border:0;background:transparent;color:var(--muted);font-size:10px;padding:7px 3px;border-radius:12px}
+    .nav button span{display:block;font-size:18px;margin-bottom:2px}.nav button.active{background:var(--soft);color:var(--ink)}
+    .field{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:none;margin:5px 0 10px}
+    textarea.field{min-height:115px;resize:vertical}.btn{border:0;border-radius:12px;padding:10px 14px;background:var(--ink);color:white;font-weight:600}
+    .btn.secondary{background:var(--soft);color:var(--ink)}.btn.small{padding:7px 10px;font-size:12px}
+    .row{display:flex;gap:8px;align-items:center}.row>*:first-child{flex:1}
+    .task{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}
+    .task input{accent-color:var(--accent);width:17px;height:17px}.task.done .taskname{text-decoration:line-through;color:#a99d92}
+    .pill{display:inline-block;background:var(--soft);padding:4px 9px;border-radius:99px;font-size:11px;color:#725d4d}
+    .progress{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin:8px 0 12px}.progress i{display:block;height:100%;background:var(--accent);width:0}
+    .muted{color:var(--muted);font-size:13px}.empty{padding:16px 0;color:var(--muted);font-size:13px}
+    .entry{border-top:1px solid var(--line);padding:12px 0}.entry strong{font-family:Georgia,serif}
+    .subject{padding:12px 0;border-bottom:1px solid var(--line)}.subject:last-child{border:0}
+    .subjecthead{display:flex;justify-content:space-between;gap:10px}
+    .tiny{font-size:11px;color:var(--muted)}
+    .goal{background:#faf7f2;border:1px solid var(--line);border-radius:13px;padding:12px;margin:8px 0}
+    .toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:9px 14px;border-radius:99px;font-size:12px;display:none;z-index:10}
+    @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.wide{grid-column:span 2}.hero{padding:28px}.brand{font-size:31px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header><div><div class="brand">bloom <span style="font-size:18px">✿</span></div><div class="tag">your mind · your goals · your little world</div></div><div class="date" id="today"></div></header>
+
+  <main>
+    <section id="home" class="section active">
+      <div class="hero"><div class="eyebrow">A fresh page, every day</div><h1 id="greeting">Hello, sunshine.</h1><p>You don't have to do everything today. Just take the next small step.</p><div class="quote" id="dailyQuote">Small steps still move you forward.</div></div>
+      <div class="grid">
+        <div class="card"><div class="eyebrow">Today's progress</div><h2 id="progressText">0 / 0</h2><div class="progress"><i id="progressBar"></i></div><div class="muted">tasks completed</div></div>
+        <div class="card"><div class="eyebrow">Your focus</div><h2>One thing at a time</h2><p class="muted">Pick a small, realistic task and begin.</p></div>
+        <div class="card wide"><div class="eyebrow">A gentle reminder</div><h2 style="font-size:18px">You are allowed to begin again.</h2><p>Progress is not a race. Rest, ask for help and return when you're ready.</p></div>
+        <div class="card"><div class="eyebrow">Quick note</div><p class="muted">Something on your mind?</p><button class="btn secondary small" onclick="show('diary')">Open my diary →</button></div>
+        <div class="card"><div class="eyebrow">Study corner</div><p class="muted">Ready for a little practice?</p><button class="btn secondary small" onclick="show('helper')">Study with me →</button></div>
+      </div>
+    </section>
+
+    <section id="diary" class="section">
+      <div class="hero"><div class="eyebrow">Private pages</div><h1>My diary</h1><p>Write freely. You don't need perfect words here.</p></div>
+      <div class="card"><label class="muted" for="diaryTitle">Today's title</label><input id="diaryTitle" class="field" placeholder="A little note to myself…"><label class="muted" for="diaryText">What's on your mind?</label><textarea id="diaryText" class="field" placeholder="Today I am feeling…"></textarea><button class="btn" onclick="saveDiary()">Save entry</button><p class="tiny">Your entries are saved in this browser on this device.</p></div>
+      <div class="card" style="margin-top:12px"><h2>Past entries</h2><div id="diaryEntries" class="empty">Your saved notes will appear here.</div></div>
+    </section>
+
+    <section id="tasks" class="section">
+      <div class="hero"><div class="eyebrow">Little steps add up</div><h1>Daily to-do list</h1><p>Choose a few useful tasks. Leave room for breaks.</p></div>
+      <div class="card"><div class="row"><input id="taskInput" class="field" style="margin:0" placeholder="Add a task…"><button class="btn" onclick="addTask()">Add</button></div><div id="taskList" style="margin-top:10px"></div><div class="row" style="margin-top:12px"><button class="btn secondary small" onclick="clearDone()">Clear completed</button><span class="tiny" id="taskCount"></span></div></div>
+    </section>
+
+    <section id="clat" class="section">
+      <div class="hero"><div class="eyebrow">Your law-school journey</div><h1>CLAT 2028 tracker</h1><p>Build your foundation steadily. Quality practice matters more than rushing.</p></div>
+      <div class="card"><h2>Preparation areas</h2><div id="clatSubjects"></div><p class="tiny">Edit the progress as you complete lessons or practice sets.</p></div>
+      <div class="card" style="margin-top:12px"><h2>This week's CLAT focus</h2><textarea id="clatFocus" class="field" placeholder="Example: 2 reading passages, legal reasoning basics, weekly current affairs…"></textarea><button class="btn secondary" onclick="saveText('clatFocus')">Save weekly focus</button></div>
+    </section>
+
+    <section id="commerce" class="section">
+      <div class="hero"><div class="eyebrow">Class 11 · Commerce</div><h1>My school tracker</h1><p>Keep school learning organised alongside CLAT preparation.</p></div>
+      <div class="card"><h2>Subjects & progress</h2><div id="commerceSubjects"></div><p class="tiny">Use the + and − buttons to update completed chapters.</p></div>
+      <div class="card" style="margin-top:12px"><h2>Upcoming school work</h2><textarea id="schoolFocus" class="field" placeholder="Assignments, tests, chapters to revise…"></textarea><button class="btn secondary" onclick="saveText('schoolFocus')">Save school notes</button></div>
+    </section>
+
+    <section id="helper" class="section">
+      <div class="hero"><div class="eyebrow">A study companion</div><h1>Study helper</h1><p>Plan a study session or prepare a question to ask ChatGPT.</p></div>
+      <div class="card"><label class="muted" for="studyTopic">What are you studying?</label><input id="studyTopic" class="field" placeholder="e.g. Demand, contract law, reading comprehension"><label class="muted" for="studyNeed">What do you need help with?</label><select id="studyNeed" class="field"><option>Explain this topic simply</option><option>Make short revision notes</option><option>Give me beginner practice questions</option><option>Test me with a short quiz</option><option>Make a 30-minute study plan</option></select><button class="btn" onclick="prepareStudy()">Prepare my study prompt</button><textarea id="studyPrompt" class="field" style="margin-top:12px" placeholder="Your study prompt will appear here…" readonly></textarea><button class="btn secondary" onclick="copyPrompt()">Copy prompt</button><p class="tiny">This starter website does not contain a built-in AI model. Copy the prompt and paste it into ChatGPT to get an actual AI response.</p></div>
+    </section>
+
+    <section id="comfort" class="section">
+      <div class="hero"><div class="eyebrow">A softer place to land</div><h1>Comfort corner</h1><p>Pause for a moment. You deserve patience, especially from yourself.</p></div>
+      <div class="card"><div class="quote" id="comfortQuote">You can take things one step at a time.</div><button class="btn secondary small" style="margin-top:12px" onclick="newQuote()">A different reminder</button></div>
+      <div class="card" style="margin-top:12px"><h2>Check in with yourself</h2><label class="muted" for="mood">How are you feeling right now?</label><select id="mood" class="field"><option>Calm</option><option>Happy</option><option>Okay</option><option>Overwhelmed</option><option>Worried</option><option>Tired</option></select><label class="muted" for="kindness">What would feel kind and helpful right now?</label><textarea id="kindness" class="field" placeholder="A break, a glass of water, asking someone for help…"></textarea><button class="btn secondary" onclick="saveCheckin()">Save my check-in</button><p class="tiny" id="checkinStatus"></p></div>
+      <div class="card" style="margin-top:12px"><h2>A tiny reset</h2><p>Put both feet comfortably on the floor. Relax your shoulders. Take a few slow, comfortable breaths, then choose just one next step.</p><p class="tiny">If stress or anxiety keeps feeling hard to manage, talk with a trusted adult or school counsellor. You don't have to handle it alone.</p></div>
+    </section>
+
+    <section id="goals" class="section">
+      <div class="hero"><div class="eyebrow">Dream gently, work steadily</div><h1>Goals & dream board</h1><p>Give your hopes a place to live, then turn them into small actions.</p></div>
+      <div class="card"><div class="row"><input id="goalInput" class="field" style="margin:0" placeholder="A goal or dream…"><button class="btn" onclick="addGoal()">Add</button></div><div id="goalList" style="margin-top:10px"></div></div>
+      <div class="card" style="margin-top:12px"><h2>My promise to myself</h2><textarea id="promise" class="field" placeholder="I want to remember that…"></textarea><button class="btn secondary" onclick="saveText('promise')">Save my promise</button></div>
+    </section>
+  </main>
+</div>
+
+<nav class="nav"><div class="navinner">
+  <button class="active" data-page="home" onclick="show('home')"><span>⌂</span>Home</button>
+  <button data-page="diary" onclick="show('diary')"><span>✎</span>Diary</button>
+  <button data-page="tasks" onclick="show('tasks')"><span>☑</span>Tasks</button>
+  <button data-page="clat" onclick="show('clat')"><span>⚖</span>CLAT</button>
+  <button data-page="commerce" onclick="show('commerce')"><span>▤</span>School</button>
+  <button data-page="helper" onclick="show('helper')"><span>✧</span>Study</button>
+  <button data-page="comfort" onclick="show('comfort')"><span>♡</span>Care</button>
+  <button data-page="goals" onclick="show('goals')"><span>☆</span>Goals</button>
+</div></nav>
+<div id="toast" class="toast"></div>
+<script>
+const $=id=>document.getElementById(id), read=(k,d)=>{try{return JSON.parse(localStorage.getItem('bloom_'+k))??d}catch{return d}}, write=(k,v)=>localStorage.setItem('bloom_'+k,JSON.stringify(v));
+const quotes=["Small steps still move you forward.","You are allowed to begin again.","You do not need to earn your rest.","Progress can be quiet and still be real.","One page, one question, one moment at a time.","You are learning; you are not behind in being human."];
+function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',1800)}
+function show(id){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));window.scrollTo(0,0);render()}
+function dateLabel(){let d=new Date();$('today').textContent=d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});$('greeting').textContent=(d.getHours()<12?'Good morning':d.getHours()<17?'Good afternoon':'Good evening')+'.'}
+function saveDiary(){let title=$('diaryTitle').value.trim(),body=$('diaryText').value.trim();if(!body){toast('Write a little note first');return}let a=read('diary',[]);a.unshift({title:title||'A little note',body,date:new Date().toLocaleString()});write('diary',a);$('diaryTitle').value='';$('diaryText').value='';renderDiary();toast('Entry saved on this device')}
+function renderDiary(){let a=read('diary',[]);$('diaryEntries').innerHTML=a.length?a.map((e,i)=>`<div class="entry"><div class="tiny">${esc(e.date)}</div><strong>${esc(e.title)}</strong><p>${esc(e.body).replace(/\n/g,'<br>')}</p><button class="btn secondary small" onclick="deleteDiary(${i})">Delete</button></div>`).join(''):'Your saved notes will appear here.'}
+function deleteDiary(i){let a=read('diary',[]);a.splice(i,1);write('diary',a);renderDiary()}
+function addTask(){let v=$('taskInput').value.trim();if(!v)return;let a=read('tasks',[]);a.push({text:v,done:false});write('tasks',a);$('taskInput').value='';renderTasks()}
+function toggleTask(i,v){let a=read('tasks',[]);a[i].done=v;write('tasks',a);renderTasks()}
+function clearDone(){write('tasks',read('tasks',[]).filter(x=>!x.done));renderTasks()}
+function renderTasks(){let a=read('tasks',[]);$('taskList').innerHTML=a.length?a.map((t,i)=>`<div class="task ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)"><span class="taskname">${esc(t.text)}</span><button class="btn secondary small" onclick="deleteTask(${i})">×</button></div>`).join(''):'<div class="empty">No tasks yet. Add one small step above.</div>';$('taskCount').textContent=`${a.filter(x=>x.done).length}/${a.length} done`;$('progressText').textContent=`${a.filter(x=>x.done).length} / ${a.length}`;$('progressBar').style.width=(a.length?a.filter(x=>x.done).length/a.length*100:0)+'%'}
+function deleteTask(i){let a=read('tasks',[]);a.splice(i,1);write('tasks',a);renderTasks()}
+const clatNames=['English Language','Current Affairs & GK','Legal Reasoning','Logical Reasoning','Quantitative Techniques'];
+const commerceNames=['Accountancy','Business Studies','Economics','English','Optional subject'];
+function renderSubjects(id,key,names){let a=read(key,names.map(n=>({name:n,done:0,total:10})));$(id).innerHTML=a.map((s,i)=>`<div class="subject"><div class="subjecthead"><strong>${esc(s.name)}</strong><span class="pill">${s.done}/${s.total}</span></div><div class="progress"><i style="width:${Math.min(100,s.done/s.total*100)}%"></i></div><div class="row"><span class="tiny">Completed lessons / chapters</span><button class="btn secondary small" onclick="changeSubject('${key}',${i},-1)">−</button><button class="btn secondary small" onclick="changeSubject('${key}',${i},1)">+</button></div></div>`).join('')}
+function changeSubject(k,i,d){let a=read(k,[]);a[i].done=Math.max(0,Math.min(a[i].total,a[i].done+d));write(k,a);render()}
+function saveText(id){write(id,$(id).value);toast('Saved')}
+function addGoal(){let v=$('goalInput').value.trim();if(!v)return;let a=read('goals',[]);a.push({text:v,done:false});write('goals',a);$('goalInput').value='';renderGoals()}
+function toggleGoal(i,v){let a=read('goals',[]);a[i].done=v;write('goals',a);renderGoals()}
+function renderGoals(){let a=read('goals',[]);$('goalList').innerHTML=a.length?a.map((g,i)=>`<div class="goal"><label><input type="checkbox" ${g.done?'checked':''} onchange="toggleGoal(${i},this.checked)"> <span style="${g.done?'text-decoration:line-through;color:#a99d92':''}">${esc(g.text)}</span></label><button class="btn secondary small" style="float:right" onclick="deleteGoal(${i})">×</button></div>`).join(''):'<div class="empty">Your dreams will appear here. Add one when you are ready.</div>'}
+function deleteGoal(i){let a=read('goals',[]);a.splice(i,1);write('goals',a);renderGoals()}
+function prepareStudy(){let t=$('studyTopic').value.trim();if(!t){toast('Add a topic first');return}let n=$('studyNeed').value;$('studyPrompt').value=`I am a Class 11 student preparing for CLAT 2028. Please help me with: ${t}. ${n}. Use beginner-friendly language, clear steps and examples. Keep the explanation age-appropriate and end with a short recap.`}
+async function copyPrompt(){let t=$('studyPrompt').value;if(!t){toast('Prepare a prompt first');return}try{await navigator.clipboard.writeText(t);toast('Copied — paste it into ChatGPT')}catch{$('studyPrompt').select();document.execCommand('copy');toast('Copied')}}
+function newQuote(){$('comfortQuote').textContent=quotes[Math.floor(Math.random()*quotes.length)]}
+function saveCheckin(){write('checkin',{mood:$('mood').value,kindness:$('kindness').value,date:new Date().toLocaleString()});$('checkinStatus').textContent='Your check-in is saved on this device.';toast('Check-in saved')}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){renderDiary();renderTasks();renderSubjects('clatSubjects','clatSubjects',clatNames);renderSubjects('commerceSubjects','commerceSubjects',commerceNames);renderGoals();['clatFocus','schoolFocus','promise'].forEach(id=>{if($(id)&&document.activeElement!==$(id))$(id).value=read(id,'')})}
+dateLabel();$('dailyQuote').textContent=quotes[new Date().getDate()%quotes.length];render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>

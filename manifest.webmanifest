@@ -1,0 +1,17 @@
+{
+  "name": "Bloom \u2014 Your little world",
+  "short_name": "Bloom",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f3ed",
+  "theme_color": "#f7f3ed",
+  "description": "A personal space to learn, reflect and grow.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
